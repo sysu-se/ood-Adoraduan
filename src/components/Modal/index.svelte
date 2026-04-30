@@ -1,6 +1,6 @@
 <script>
 	import { fade, scale } from 'svelte/transition';
-	import { modal, modalData } from '@sudoku/stores/modal';
+	import { modal, modalData } from '../../stores/legacy/modal';
 	import { MODAL_NONE, MODAL_DURATION } from '@sudoku/constants';
 	import types from './Types';
 
@@ -13,7 +13,7 @@
 	}
 </script>
 
-{#if $modal !== MODAL_NONE}
+{#if $modal}
 	<div class="modal">
 		<button transition:fade={{duration: MODAL_DURATION}} class="modal-overlay" on:click={handleOverlayClick} tabindex="-1"></button>
 

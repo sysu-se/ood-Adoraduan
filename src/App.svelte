@@ -1,48 +1,37 @@
 <script>
-	import { onMount } from 'svelte';
-	import { validateSencode } from '@sudoku/sencode';
-	import game from '@sudoku/game';
-	import { modal } from '@sudoku/stores/modal';
-	import { gameWon } from '@sudoku/stores/game';
+    import { onMount } from 'svelte';
+    import { gameStore } from './stores/gameStore';
+    import { validateSencode } from '@sudoku/sencode';
 	import Board from './components/Board/index.svelte';
 	import Controls from './components/Controls/index.svelte';
 	import Header from './components/Header/index.svelte';
 	import Modal from './components/Modal/index.svelte';
 
-	gameWon.subscribe(won => {
-		if (won) {
-			game.pause();
-			modal.show('gameover');
-		}
-	});
+	
+onMount(() => {
+    // simplified startup: if validateSencode and modal exist, show welcome modal with code
+    try {
+        let hash = location.hash;
+        if (hash && hash.startsWith('#')) hash = hash.slice(1);
+        const sencode = (typeof validateSencode === 'function' && validateSencode(hash)) ? hash : null;
 
-	onMount(() => {
-		let hash = location.hash;
-
-		if (hash.startsWith('#')) {
-			hash = hash.slice(1);
-		}
-
-		let sencode;
-		if (validateSencode(hash)) {
-			sencode = hash;
-		}
-
-		modal.show('welcome', { onHide: game.resume, sencode });
-	});
+        if (typeof modal !== 'undefined' && modal && typeof modal.show === 'function') {
+            modal.show('welcome', { sencode });
+        }
+    } catch (e) {
+        // ignore missing pieces in trimmed environment
+    }
+});
 </script>
 
-<!-- Timer, Menu, etc. -->
 <header>
 	<Header />
 </header>
 
-<!-- Sudoku Field -->
 <section>
 	<Board />
 </section>
 
-<!-- Keyboard -->
 <footer>
 	<Controls />
 </footer>

@@ -1,6 +1,6 @@
 <script>
-	import { modal } from '@sudoku/stores/modal';
-	import { pauseGame, resumeGame } from '@sudoku/game';
+	import { modal } from '../../stores/legacy/modal';
+	import { pauseGame, resumeGame } from '../../stores/legacy/timer';
 
 	function handleShareButton() {
 		pauseGame();

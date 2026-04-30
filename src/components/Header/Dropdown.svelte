@@ -1,10 +1,10 @@
 <script>
-	import game from '@sudoku/game';
+	import game from '../../stores/legacy/game';
 	import { validateSencode } from '@sudoku/sencode';
-	import { modal } from '@sudoku/stores/modal';
+	import { modal } from '../../stores/legacy/modal';
 	import { slide, fade } from 'svelte/transition';
 	import { DIFFICULTIES, DROPDOWN_DURATION, DIFFICULTY_CUSTOM } from '@sudoku/constants';
-	import { difficulty } from '@sudoku/stores/difficulty';
+	import { difficulty } from '../../stores/legacy/difficulty';
 
 	let dropdownVisible = false;
 
@@ -18,6 +18,8 @@
 			button: 'Continue',
 			onHide: game.resume,
 			callback: () => {
+				// update difficulty store so label updates
+				difficulty.set(difficultyValue);
 				game.startNew(difficultyValue);
 			},
 		});

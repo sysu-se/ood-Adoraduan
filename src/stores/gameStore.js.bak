@@ -1,0 +1,85 @@
+// backup of gameStore.js before canUndo/canRedo changes
+
+// src/stores/gameStore.js
+import { writable } from 'svelte/store';
+import { createGame, createSudokuFromJSON } from '../domain/index.js';
+
+const DEFAULT_GRID = [
+    [5,3,0,0,7,0,0,0,0],
+    [6,0,0,1,9,5,0,0,0],
+    [0,9,8,0,0,0,0,6,0],
+    [8,0,0,0,6,0,0,0,3],
+    [4,0,0,8,0,3,0,0,1],
+    [7,0,0,0,2,0,0,0,6],
+    [0,6,0,0,0,0,2,8,0],
+    [0,0,0,4,1,9,0,0,5],
+    [0,0,0,0,8,0,0,7,9]
+];
+
+function createGameStore() {
+    function syncFromLegacyGrid(legacyGrid) {
+        const sudoku = createSudokuFromJSON({ grid: legacyGrid });
+        initialGrid = sudoku.getGrid();
+        game = createGame({ sudoku });
+        refresh();
+    }
+
+    let sudokuInstance = createSudokuFromJSON({ grid: DEFAULT_GRID });
+    let initialGrid = sudokuInstance.getGrid();
+    let game = createGame({ sudoku: sudokuInstance });
+
+    const { subscribe, set } = writable({
+        grid: game.getSudoku().getGrid(),
+        initialGrid
+    });
+
+    function refresh() {
+        set({ grid: game.getSudoku().getGrid(), initialGrid });
+    }
+
+    function guess(row, col, value) {
+        if (initialGrid && initialGrid[row] && initialGrid[row][col] && initialGrid[row][col] !== 0) {
+            console.warn('[gameStore] attempt to modify initial given cell ignored', { row, col });
+            return false;
+        }
+
+        game.guess({ row, col, value });
+        refresh();
+        return true;
+    }
+
+    function undo() {
+        game.undo();
+        refresh();
+    }
+
+    function redo() {
+        game.redo();
+        refresh();
+    }
+
+    function newGame(gridOrSencode) {
+        let grid;
+        if (Array.isArray(gridOrSencode) && gridOrSencode.length === 9) {
+            grid = gridOrSencode;
+        } else {
+            grid = DEFAULT_GRID;
+        }
+        const sudoku = createSudokuFromJSON({ grid });
+        initialGrid = sudoku.getGrid();
+        game = createGame({ sudoku });
+        refresh();
+    }
+
+    return {
+        subscribe,
+        guess,
+        undo,
+        redo,
+        newGame,
+        syncFromLegacyGrid,
+        getSudoku: () => game.getSudoku()
+    };
+}
+
+export const gameStore = createGameStore();

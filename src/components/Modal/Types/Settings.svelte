@@ -1,7 +1,7 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import Switch from '../../Utils/Switch.svelte';
-	import { settings as settingsStore } from '@sudoku/stores/settings';
+	import { settings as settingsStore } from '../../../stores/legacy/settings';
 	import { MAX_HINTS } from '@sudoku/constants';
 
 	export let data = {};

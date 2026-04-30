@@ -1,0 +1,33 @@
+// backup of Actions.svelte before enabling disabled bindings
+
+<script>
+	import { gameStore } from '../../../stores/gameStore';
+	import { notes } from '../../../stores/legacy/notes';
+	import { settings } from '../../../stores/legacy/settings';
+
+	function handleUndo() {
+		gameStore.undo();
+	}
+
+	function handleRedo() {
+		gameStore.redo();
+	}
+
+	function handleHint() {
+		alert('Hint feature not implemented in this version');
+	}
+</script>
+
+<div class="action-buttons space-x-3">
+
+	<button class="btn btn-round" on:click={handleUndo} title="Undo">
+		<!-- svg -->
+	</button>
+
+	<button class="btn btn-round" on:click={handleRedo} title="Redo">
+		<!-- svg -->
+	</button>
+
+	<!-- rest omitted -->
+
+</div>

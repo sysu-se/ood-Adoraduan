@@ -1,8 +1,17 @@
 <script>
-	import { timer } from '@sudoku/stores/timer';
-	import { pauseGame, resumeGame } from '@sudoku/game';
-	import { gamePaused } from '@sudoku/stores/game';
-	import { settings } from '@sudoku/stores/settings';
+	import { timer, gamePaused, pauseGame, resumeGame } from '../../../stores/legacy/timer';
+	import { settings } from '../../../stores/legacy/settings';
+	function pad(n) { return String(n).padStart(2, '0'); }
+	function formatTime(totalSeconds) {
+		const hrs = Math.floor(totalSeconds / 3600);
+		const mins = Math.floor((totalSeconds % 3600) / 60);
+		const secs = totalSeconds % 60;
+		if (hrs > 0) return `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+		return `${pad(mins)}:${pad(secs)}`;
+	}
+
+	$: formatted = formatTime($timer || 0);
+	$: console.log('[Timer] formatted, raw, paused', formatted, $timer, $gamePaused);
 </script>
 
 <div class="timer-container">
@@ -17,7 +26,7 @@
 	</button>
 
 	{#if $settings.displayTimer}
-		<span class="timer-text" title="Time">{$timer}</span>
+		<span class="timer-text" title="Time">{formatted}</span>
 	{/if}
 </div>
 
